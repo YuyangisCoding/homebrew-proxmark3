@@ -25,6 +25,7 @@ class Proxmark3 < Formula
   option "with-blueshark", "Enable Blueshark (BT Addon) support"
   option 'with-generic', 'Build for generic devices instead of RDV4'
   option 'with-small', 'Build for 256kB devices'
+  option 'with-fast-build', 'Enable parallel compilation for faster builds'
 
   FUNCTIONS = %w[em4x50 felica hfplot hfsniff hitag iclass iso14443a iso14443b iso15693 legicrf lf nfcbarcode zx8211]
   STANDALONE = {
@@ -87,7 +88,10 @@ class Proxmark3 < Formula
 
     args << "STANDALONE=#{standalone}" unless standalone.nil?
 
-    system "make", "clean"
+
+    args << "-j" if build.with?('fast-build')
+
+    system "make", "clean", *args
     system "make", "all", *args
     system "make", "install", "PREFIX=#{prefix}", *args
 
